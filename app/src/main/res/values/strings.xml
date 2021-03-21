@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Assignment</string>
+
+
+    <string name="card_name">Name: %s</string>
+    <string name="card_capital">Capital: %s</string>
+    <string name="card_region">Region: %s</string>
+    <string name="card_subregion">Sub-Region: %s</string>
+    <string name="card_population">Population: %s</string>
+    <string name="card_borders">Borders: %s</string>
+    <string name="card_languages">Languages: %s</string>
+</resources>
