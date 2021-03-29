@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="example.javatpoint.com.optionmenu.MainActivity">
+
+    <item
+        android:id="@+id/delete_menu"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:enabled="true"
+        android:visible="true"
+        app:showAsAction="always"
+        android:title="Delete" />
+
+    <item
+        android:id="@+id/refresh_menu"
+        android:icon="@android:drawable/ic_popup_sync"
+        android:enabled="true"
+        android:visible="true"
+        app:showAsAction="ifRoom"
+        android:title="Refresh"/>
+
+</menu>
