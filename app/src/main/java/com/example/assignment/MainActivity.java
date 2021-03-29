@@ -4,9 +4,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,42 +21,32 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.assignment.Database.CountryDatabase;
-import com.example.assignment.Model.Country;
+import com.example.assignment.Database.MemberDatabase;
+import com.example.assignment.Model.Member;
 import com.example.assignment.Utils.MyAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
-    public static final String URL = "https://restcountries.eu/rest/v2/region/asia";
-    private CountryDatabase countryDatabase;
+    public static final String URL = "https://api.spacexdata.com/v4/crew";
+    private MemberDatabase memberDatabase;
     private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        countryDatabase = Room.databaseBuilder(getApplicationContext(), CountryDatabase.class, "countryDB").allowMainThreadQueries().build();
+        Toast.makeText(this, "Click on load button to refresh data.", Toast.LENGTH_SHORT).show();
+        memberDatabase = Room.databaseBuilder(getApplicationContext(), MemberDatabase.class, "countryDB").allowMainThreadQueries().build();
 
         if (haveNetworkConnection()) {
             fetchDataFromWeb();
-//            OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWorker.class).build();
-            Log.d("DEBUG", "Fetching from web");
-//            WorkManager.getInstance(this).enqueue(oneTimeWorkRequest);
         }
 
-
-        Log.d("DEBUG", "Size: " + countryDatabase.getCountryDAO().getAllCountry().size());
-
-
-        MyAdapter myAdapter = new MyAdapter(getApplicationContext(), countryDatabase);
+        MyAdapter myAdapter = new MyAdapter(getApplicationContext(), memberDatabase);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -92,9 +82,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==R.id.delete_menu){
-            countryDatabase.getCountryDAO().deleteAllCountry();
-            MyAdapter myAdapter = new MyAdapter(getApplicationContext(),countryDatabase);
+            memberDatabase.getMemberDAO().deleteAllMember();
+            MyAdapter myAdapter = new MyAdapter(getApplicationContext(), memberDatabase);
             recyclerView.setAdapter(myAdapter);
+        }else if(item.getItemId()==R.id.refresh_menu){
+            reload();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -109,32 +101,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                countryDatabase.getCountryDAO().deleteAllCountry();
+                memberDatabase.getMemberDAO().deleteAllMember();
                 for(int i=0;i<response.length();i++){
                     try {
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        Country country = new Country(jsonObject.getString("name"),jsonObject.getString("capital"),jsonObject.getString("region"),jsonObject.getString("subregion"),jsonObject.getLong("population"));
-                        JSONArray borderArray = jsonObject.getJSONArray("borders");
-                        List<String> borderList = new ArrayList<>();
-                        for(int j=0;j<borderArray.length();j++){
-                            borderList.add(borderArray.get(j).toString());
-                        }
-                        country.setBorders(borderList);
-
-                        List<String> languageList = new ArrayList<>();
-
-                        JSONArray languages = jsonObject.getJSONArray("languages");
-                        for (int j=0;j<languages.length();j++){
-                            JSONObject lang = languages.getJSONObject(j);
-                            languageList.add(lang.getString("name"));
-                        }
-
-                        country.setLanguages(languageList);
-
-                        country.setImage(jsonObject.getString("flag"));
-
-                        countryDatabase.getCountryDAO().addCountry(country);
-
+                        JSONObject obj = response.getJSONObject(i);
+                        Member member = new Member(i, obj.getString("name"), obj.getString("agency"), obj.getString("wikipedia"), obj.getString("status"), obj.getString("image"));
+                        memberDatabase.getMemberDAO().addMember(member);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -150,4 +122,13 @@ public class MainActivity extends AppCompatActivity {
         queue.add(arrayRequest);
     }
 
+
+    public void reload(){
+        if (haveNetworkConnection()) {
+            fetchDataFromWeb();
+        }
+
+        MyAdapter myAdapter = new MyAdapter(getApplicationContext(), memberDatabase);
+        recyclerView.setAdapter(myAdapter);
+    }
 }

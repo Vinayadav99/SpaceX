@@ -1,8 +1,6 @@
 package com.example.assignment.Utils;
 
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,88 +10,77 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.assignment.Database.CountryDatabase;
-import com.example.assignment.Model.Country;
+import com.example.assignment.Database.MemberDatabase;
+import com.example.assignment.Model.Member;
 import com.example.assignment.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
     private Context context;
-    private CountryDatabase countryDatabase;
-    List<Country> countryList;
+    private MemberDatabase memberDatabase;
+    List<Member> memberList;
 
-    public MyAdapter(Context context, CountryDatabase countryDatabase){
+    public MyAdapter(Context context, MemberDatabase memberDatabase){
         this.context = context;
-        this.countryDatabase = countryDatabase;
-        countryList = this.countryDatabase.getCountryDAO().getAllCountry();
+        this.memberDatabase = memberDatabase;
+        memberList = this.memberDatabase.getMemberDAO().getAllMember();
     }
 
     @NonNull
     @Override
     public MyAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.country_card,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_layout,parent,false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyAdapter.ViewHolder holder, int position) {
 
-        Country country = countryList.get(position);
+        Member member = memberList.get(position);
+        holder.name.setText(context.getResources().getString(R.string.card_name,member.getName()));
+        holder.agency.setText(context.getResources().getString(R.string.card_agency,member.getAgency()));
+        holder.link.setText(context.getResources().getString(R.string.card_link,member.getLink()));
+        holder.status.setText(context.getResources().getString(R.string.card_status,member.getStatus()));
 
-        Log.d("DEBUG",country.toString());
+        Picasso.get().load(member.getImage()).into(holder.image);
 
-        holder.country_name.setText(context.getString(R.string.card_name,country.getName()));
-        holder.country_capital.setText(context.getString(R.string.card_capital,country.getCapital()));
-        holder.country_region.setText(context.getString(R.string.card_region,country.getRegion()));
-        holder.country_subregion.setText(context.getString(R.string.card_subregion,country.getSubRegion()));
-        holder.country_population.setText(context.getString(R.string.card_population,String.valueOf(country.getPopulation())));
+        //Util.fetchSvg(context, member.getImage(), holder.image);
 
 
-        Uri url = Uri.parse(country.getImage());
-
-        Util.fetchSvg(context, country.getImage(), holder.flag_image);
-
-        List<String> borders = country.getBorders();
-        String border = "";
-        for (String s : borders) {
-            border+=s+"\n";
-        }
-        holder.country_borders.setText(context.getString(R.string.card_borders,border));
-
-        List<String> languages = country.getLanguages();
-        String language = "";
-        for (String s : languages) {
-            language+=s+"\n";
-        }
-        holder.country_languages.setText(context.getString(R.string.card_languages,language));
 
 
     }
 
     @Override
     public int getItemCount() {
-        return countryList.size();
+        return memberList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public ImageView flag_image;
-        public TextView country_name,country_capital,country_region,country_subregion,country_population,country_borders,country_languages;
+        ImageView image;
+        TextView name,agency,link,status;
+
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            flag_image = itemView.findViewById(R.id.card_flag);
-            country_name = itemView.findViewById(R.id.card_name);
-            country_capital = itemView.findViewById(R.id.card_capital);
-            country_region = itemView.findViewById(R.id.card_region);
-            country_subregion = itemView.findViewById(R.id.card_subregion);
-            country_population = itemView.findViewById(R.id.card_population);
-            country_borders = itemView.findViewById(R.id.card_border);
-            country_languages = itemView.findViewById(R.id.card_language);
+            image = itemView.findViewById(R.id.card_image);
+            name = itemView.findViewById(R.id.card_name);
+            agency = itemView.findViewById(R.id.card_agency);
+            link = itemView.findViewById(R.id.card_hyperlink);
+            status = itemView.findViewById(R.id.card_status);
+
+            link.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View view) {
 
         }
     }
