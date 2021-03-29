@@ -9,7 +9,7 @@
     app:cardElevation="7dp"
     app:cardCornerRadius="5dp"
     app:cardUseCompatPadding="true"
-    app:cardBackgroundColor="#8781838B">
+    app:cardBackgroundColor="#87555559">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                 android:fontFamily="monospace"
                 android:padding="5dp"
                 android:layout_margin="10dp"
-                android:textColor="@color/teal_700"/>
+                android:textColor="#1E88E5"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

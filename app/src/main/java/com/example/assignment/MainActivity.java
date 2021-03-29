@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             fetchDataFromWeb();
         }
 
-        MyAdapter myAdapter = new MyAdapter(getApplicationContext(), memberDatabase);
+        MyAdapter myAdapter = new MyAdapter(MainActivity.this, memberDatabase);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==R.id.delete_menu){
             memberDatabase.getMemberDAO().deleteAllMember();
-            MyAdapter myAdapter = new MyAdapter(getApplicationContext(), memberDatabase);
+            MyAdapter myAdapter = new MyAdapter(MainActivity.this, memberDatabase);
             recyclerView.setAdapter(myAdapter);
         }else if(item.getItemId()==R.id.refresh_menu){
             reload();
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             fetchDataFromWeb();
         }
 
-        MyAdapter myAdapter = new MyAdapter(getApplicationContext(), memberDatabase);
+        MyAdapter myAdapter = new MyAdapter(MainActivity.this, memberDatabase);
         recyclerView.setAdapter(myAdapter);
     }
 }

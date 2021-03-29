@@ -1,6 +1,8 @@
 package com.example.assignment.Utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +83,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
         @Override
         public void onClick(View view) {
-
+            Intent browserIntent = new Intent().setAction(Intent.ACTION_VIEW);
+            browserIntent.setData(Uri.parse(link.getText().toString()));
+            context.startActivity(browserIntent);
         }
     }
 }
